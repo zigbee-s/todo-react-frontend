@@ -5,17 +5,19 @@ function TodoApp() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
 
+  const GO_MONGO_API = process.env.GO_MONGO_API
+
   useEffect(() => {
-    axios.get('http://localhost:8080/todo/')
+    axios.get( `${GO_MONGO_API}/todo/`)
       .then(response => setTodos(response.data.data))
       .catch(error => console.log(error));
-  }, []);
+  }, [GO_MONGO_API]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:8080/todo/', { task: newTodo })
+    axios.post(`${GO_MONGO_API}/todo/`, { task: newTodo })
       .then(response => {
-        axios.get('http://localhost:8080/todo/')
+        axios.get(`${GO_MONGO_API}/todo/`)
         .then(response => setTodos(response.data.data))
         .catch(error => console.log(error));
       })
@@ -23,7 +25,7 @@ function TodoApp() {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:8080/todo/${id}`)
+    axios.delete(`${GO_MONGO_API}/todo/${id}`)
       .then(response => {
         setTodos(todos.filter(todo => todo.id !== id));
       })
@@ -31,7 +33,6 @@ function TodoApp() {
   };
 
   const handleToggle = (id) => {
-    console.log("hey" , id)
     const data = {
         task: todos.find(todo => todo.id === id).task,
         done: !todos.find(todo => todo.id === id).done,
@@ -40,9 +41,9 @@ function TodoApp() {
       };
 
     console.log(data)
-    axios.put(`http://localhost:8080/todo/${id}`, data)
+    axios.put(`${GO_MONGO_API}/todo/${id}`, data)
       .then(response => {
-        axios.get('http://localhost:8080/todo/')
+        axios.get(`${GO_MONGO_API}/todo/`)
             .then(response => setTodos(response.data.data))
             .catch(error => console.log(error));
         })
